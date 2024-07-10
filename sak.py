@@ -8,8 +8,12 @@ def send_request(telegram_id):
     url = "https://sackbird-backend.liukundavid.workers.dev/api/users/batch/pray"
     payload = {
         "telegramId": telegram_id,
-        "totalPrayCoinSum": 2000,
-        "consumePower": 200
+        "totalPrayCoinSum": 200,
+        "consumePower": 20,
+        "prayEventList": [
+            1720577444846,
+            1720577446365
+        ]
     }
     headers = {
         'Content-Type': 'application/json',
@@ -24,6 +28,16 @@ def read_telegram_ids(file_path):
         telegram_ids = [line.strip() for line in file.readlines()]
     return telegram_ids
 
+# Fungsi untuk menampilkan hitung mundur
+def countdown(t):
+    while t:
+        mins, secs = divmod(t, 60)
+        hours, mins = divmod(mins, 60)
+        timeformat = f'{hours:02d}:{mins:02d}:{secs:02d}'
+        print(f'Next run in: {timeformat}', end='\r')
+        time.sleep(1)
+        t -= 1
+
 # Fungsi utama untuk mengelola permintaan
 def main():
     telegram_ids = read_telegram_ids('data.txt')
@@ -37,9 +51,9 @@ def main():
                 print(f"Request status code: {status_code}")
                 time.sleep(5)  # Jeda 5 detik antar permintaan
             print(f"Completed 14 requests for account ID: {telegram_id}")
-        next_run_time = datetime.now() + timedelta(hours=6)
-        print(f"All accounts processed. Next run at: {next_run_time}")
-        time.sleep(6 * 3600)  # Tidur selama 6 jam sebelum iterasi berikutnya
+        
+        next_run_seconds = 6 * 3600  # 6 jam dalam detik
+        countdown(next_run_seconds)
 
 if __name__ == "__main__":
     main()
