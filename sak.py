@@ -1,7 +1,7 @@
 import requests
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Fungsi untuk mengirimkan permintaan POST
 def send_request(telegram_id):
@@ -11,7 +11,10 @@ def send_request(telegram_id):
         "totalPrayCoinSum": 2000,
         "consumePower": 200
     }
-    headers = {'Content-Type': 'application/json'}
+    headers = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
+    }
     response = requests.post(url, data=json.dumps(payload), headers=headers)
     return response.status_code
 
@@ -32,8 +35,10 @@ def main():
             for _ in range(14):
                 status_code = send_request(telegram_id)
                 print(f"Request status code: {status_code}")
+                time.sleep(5)  # Jeda 5 detik antar permintaan
             print(f"Completed 14 requests for account ID: {telegram_id}")
-        print(f"All accounts processed. Next run at: {datetime.now() + timedelta(hours=6)}")
+        next_run_time = datetime.now() + timedelta(hours=6)
+        print(f"All accounts processed. Next run at: {next_run_time}")
         time.sleep(6 * 3600)  # Tidur selama 6 jam sebelum iterasi berikutnya
 
 if __name__ == "__main__":
